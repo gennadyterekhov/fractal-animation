@@ -2,4 +2,4 @@
 # trying manim
 
 
-uv run manim -pql main.py CreateCircle
+uv run manim -pql main.py StartingFromTheLeftCircle
