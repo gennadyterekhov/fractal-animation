@@ -94,26 +94,28 @@ class StartingFromTheLeftCircle(Scene):
         return self.make_1_iteration_and_return_starting_circle_and_all_prev_objs(left_circle, all_object)
 
     def construct(self):
+        self.make_n_iters(3)
+
+    def make_n_iters(self, n: int = 2):
 
         res_dct = self.make_the_first_iteration_and_return_starting_circle()
-        res_dct = self.make_1_iteration_and_return_starting_circle_and_all_prev_objs(
-            res_dct['starting_circle'],
-            res_dct['all_objects'],
-        )
-        res_dct['starting_circle']
-        res_dct['all_objects']
+        for i in range(n):
+            res_dct = self.make_1_iteration_and_return_starting_circle_and_all_prev_objs(
+                res_dct['starting_circle'],
+                res_dct['all_objects'],
+            )
 
-    def make_connecting_line(self, obj1:Circle, obj2:Circle):
+    def make_connecting_line(self, obj1: Circle, obj2: Circle):
         # Calculate points on the circles' boundaries
         direction = (obj2.get_center() - obj1.get_center())
         direction = normalize(direction)  # Manim's normalize function
         print(f'direction', direction)
-        
+
         # Start point: obj1 center + radius1 * direction (towards obj2)
-        start_point = obj1.get_center() + direction #* obj1.radius
+        start_point = obj1.get_center() + direction  # * obj1.radius
 
         # End point: obj2 center - radius2 * direction (from obj2 towards obj1)
-        end_point = obj2.get_center() - direction #* obj2.radius
+        end_point = obj2.get_center() - direction  # * obj2.radius
         print(f'start_point', start_point)
         print(f'end_point', end_point)
         print(f'obj1.radius', obj1.radius)
