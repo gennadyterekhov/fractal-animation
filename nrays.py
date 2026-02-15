@@ -1,6 +1,7 @@
 from manim import *
 from numpy import ndarray
 import math
+from src.angle import get_angle, to_rads
 
 
 class StartingFromTheLeftCircle(Scene):
@@ -19,7 +20,7 @@ class StartingFromTheLeftCircle(Scene):
             )
 
     def make_the_first_iteration_and_return_starting_circle(self, rays: int = 4) -> dict:
-        left_circle = self.make_filled_circle()
+        left_circle = make_filled_circle()
 
         central_circle = Circle(color=WHITE)
 
@@ -39,21 +40,22 @@ class StartingFromTheLeftCircle(Scene):
         central_circle.next_to(starting_circle, RIGHT, buff=0.5)
         self.play(Create(central_circle))
 
-        connecting_line = self.make_connecting_line(
+        connecting_line = make_connecting_line(
             starting_circle,
             central_circle,
         )
 
         self.play(Create(connecting_line))
 
-        # will have n circles
+        print(f'will have {rays} circles')
         anims = []
-        for i in range(1, rays+1):
-            # res_crcl = self.create_nth_circle(i)
-            crcl = self.make_filled_circle()
-            crcl.next_to(
-                central_circle, self.get_direction(i, rays), buff=0.5)
-            cl = self.make_connecting_line(crcl, central_circle)
+        for i in range(1, rays):
+            print(f'iter {i}')
+            crcl = make_filled_circle()
+            dir = get_direction(i, rays)
+            print(f'direction', dir)
+            crcl.next_to(central_circle, dir, buff=0.5)
+            cl = make_connecting_line(crcl, central_circle)
             all_objects.add(crcl)
             all_objects.add(cl)
 
@@ -85,63 +87,139 @@ class StartingFromTheLeftCircle(Scene):
             'all_objects': all_objects,
         }
 
-    def create_nth_circle(self, iter: int, rays: int) -> dict:
-        crcl = self.make_filled_circle()
-        return {
-            'circle': crcl,
-            'direction': self.get_direction(iter, rays),
-        }
 
-    def get_direction(self, iter: int, rays: int) -> ndarray:
-        '''
-        UP: Vector3D = np.array((0.0, 1.0, 0.0))
-        """One unit step in the positive Y direction."""
+class NRaysTest(Scene):
+    # works
+    def construct(self) -> dict:
+        central_circle = Circle(color=WHITE)
+        all_objects = VGroup()
+        all_objects.add(central_circle)
+        points = [
 
-        DOWN: Vector3D = np.array((0.0, -1.0, 0.0))
-        """One unit step in the negative Y direction."""
+        ]
+        # self.play(Create(central_circle),)
+        self.add(central_circle)
+        rays = 7
+        print(f'will have {rays} circles')
+        for i in range(0, rays+1):
+            print(f'iter {i}')
 
-        RIGHT: Vector3D = np.array((1.0, 0.0, 0.0))
-        """One unit step in the positive X direction."""
+            angle = get_angle(i, rays)
+            angle_in_rads = to_rads(angle)
+            x = math.cos(angle_in_rads)
+            y = math.sin(angle_in_rads)
 
-        LEFT: Vector3D = np.array((-1.0, 0.0, 0.0))
-        """One unit step in the negative X direction."""
+            print('angle', angle)
+            print('angle_in_rads', angle_in_rads)
+            print('x', x)
+            print('y', y)
 
-        '''
-        print()
-        print('get_direction', iter)
-        if iter == 0:
-            return RIGHT
-        angle = self.get_angle(iter, rays)
-        angle_in_rads = self.to_rads(angle)
-        x = math.cos(angle_in_rads)
-        y = math.sin(angle_in_rads)
-        print('angle', angle)
-        print('x', x)
-        print('y', y)
-        return np.array((x*0.5, y*0.5, 0.0))
+            # dir = get_direction(i, rays)
 
-    def get_angle(self, iter: int, rays: int) -> float:
-        part = 360/rays
-        print('360/rays', part)
-        print('part*iter', part*iter)
-        angle = 180-part*iter
-        return angle
+            pnt = Dot(point=[x, y, 0])
+            circle = Circle(
+                radius=0.5,
+                color=RED,
+                stroke_width=2
+            ).move_to(pnt.get_center())
+            radius = Line((x, y, 0), (0, 0, 0),
+                          color=WHITE, stroke_width=3)
+            self.add(pnt)
+            self.add(circle)
+            self.add(radius)
+        self.wait()
 
-    def to_rads(self, angle_in_degrees: float) -> float:
-        return math.pi/180 * angle_in_degrees
 
-    def make_connecting_line(self, obj1: Circle, obj2: Circle):
-        direction = (obj2.get_center() - obj1.get_center())
-        direction = normalize(direction)
+class PointExample(Scene):
+    def construct(self):
+        # Create a dot at specific coordinates (default radius=0.08)
+        point = Dot(point=[2, 1, 0])  # [x, y, z] coordinates
+        points = [
+            # Dot(point=[0, 0, 0]),
+            # Dot(point=[2, 1, 0]),
+        ]
+        labels = []
 
-        start_point = obj1.get_center() + direction
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                points.append(Dot(point=[x, y, 0]))
+                # labels.append(MathTex(f"({x}, {y})", color=WHITE).next_to(point, UP))
+        # label = MathTex("P", color=WHITE).next_to(point, UP)
+        # Add to scene
+        self.add(*points)
+        self.add(*labels)
+        self.wait()
 
-        end_point = obj2.get_center() - direction
-        connecting_line = Line(start_point, end_point,
-                               color=WHITE, stroke_width=3)
-        return connecting_line
 
-    def make_filled_circle(self):
-        circle = Circle(color=WHITE)
-        circle.set_fill(GREEN, opacity=0.8)
-        return circle
+class HalfCircle(Scene):
+    def construct(self):
+        # Create a dot at specific coordinates (default radius=0.08)
+        point = Dot(point=[2, 1, 0])  # [x, y, z] coordinates
+        points = [
+            # Dot(point=[0, 0, 0]),
+            # Dot(point=[2, 1, 0]),
+        ]
+        labels = []
+        step = 0.1
+        # Create a range from 0 to 2.0 with a step of 0.5 (multiply bounds by 1/step)
+        float_list = [i * step for i in range(int(0 / step), int(2.5 / step))]
+
+        # range(0,4,0.1)
+
+        for rad in float_list:
+
+            points.append(Dot(point=[math.cos(rad), math.sin(rad), 0]))
+            # labels.append(MathTex(f"({x}, {y})", color=WHITE).next_to(point, UP))
+        # label = MathTex("P", color=WHITE).next_to(point, UP)
+        # Add to scene
+        self.add(*points)
+        self.add(*labels)
+        self.wait()
+
+
+def get_direction(iter: int, rays: int) -> ndarray:
+    '''
+    UP: Vector3D = np.array((0.0, 1.0, 0.0))
+    """One unit step in the positive Y direction."""
+
+    DOWN: Vector3D = np.array((0.0, -1.0, 0.0))
+    """One unit step in the negative Y direction."""
+
+    RIGHT: Vector3D = np.array((1.0, 0.0, 0.0))
+    """One unit step in the positive X direction."""
+
+    LEFT: Vector3D = np.array((-1.0, 0.0, 0.0))
+    """One unit step in the negative X direction."""
+
+    '''
+    print()
+    print('get_direction', iter)
+    if iter == 0:
+        return RIGHT
+    angle = get_angle(iter, rays)
+    angle_in_rads = to_rads(angle)
+    x = math.cos(angle_in_rads)
+    y = math.sin(angle_in_rads)
+    print('angle', angle)
+    print('angle_in_rads', angle_in_rads)
+    print('x', x)
+    print('y', y)
+    return np.array((x, y, 0.0))
+
+
+def make_connecting_line(obj1: Circle, obj2: Circle):
+    direction = (obj2.get_center() - obj1.get_center())
+    direction = normalize(direction)
+
+    start_point = obj1.get_center() + direction
+
+    end_point = obj2.get_center() - direction
+    connecting_line = Line(start_point, end_point,
+                           color=WHITE, stroke_width=3)
+    return connecting_line
+
+
+def make_filled_circle():
+    circle = Circle(color=WHITE)
+    circle.set_fill(GREEN, opacity=0.8)
+    return circle
