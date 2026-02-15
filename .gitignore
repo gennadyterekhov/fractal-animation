@@ -11,4 +11,4 @@ wheels/
 
 _temp
 media
-
+.DS_Store
