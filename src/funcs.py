@@ -56,3 +56,7 @@ def make_filled_circle():
     circle = Circle(color=WHITE)
     circle.set_fill(GREEN, opacity=0.8)
     return circle
+def make_filled_circle_w_rays(rays:int):
+    circle = Circle(color=WHITE,radius=get_circle_radius(rays))
+    circle.set_fill(GREEN, opacity=0.8)
+    return circle
