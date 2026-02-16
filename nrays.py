@@ -32,8 +32,12 @@ class StartingFromTheLeftCircle(Scene):
         '''
         central_circle = Circle(color=WHITE)
 
+        self.play(
+            all_objects.animate.shift(LEFT * 2.5),
+            run_time=2
+        )
         # first ray is always left, so central has direction=right
-        central_circle.next_to(starting_circle, RIGHT, buff=0.5)
+        # central_circle.next_to(starting_circle, RIGHT, buff=0.5)
         all_objects.add(central_circle)
         self.play(Create(central_circle))
 
@@ -44,28 +48,21 @@ class StartingFromTheLeftCircle(Scene):
         all_objects.add(connecting_line)
         self.play(Create(connecting_line))
 
-        self.play(
-            all_objects.animate.shift(LEFT * 2.5),
-            run_time=2
-        )
 
         central_point = Dot(point=[0, 0, 0], color=BLUE)
         # all_objects.add(central_point)
-        
+
         print(f'will have {rays} circles')
         anims = []
         for i in range(1, rays):
             print(f'iter {i}')
-            
 
             angle = get_angle(i, rays)
             angle_in_rads = to_rads(angle)
             x = math.cos(angle_in_rads)
             y = math.sin(angle_in_rads)
 
-            
-            
-            pnt = Dot(point=[x*2.5, y*2.5, 0],color=PURPLE)
+            pnt = Dot(point=[x*2.5, y*2.5, 0], color=PURPLE)
             virtual_circle_w_centers = Circle(
                 radius=2.5,
                 color=BLUE,
@@ -80,7 +77,7 @@ class StartingFromTheLeftCircle(Scene):
             ).move_to(pnt.get_center())
             crcl.set_fill(GREEN, opacity=0.8)
             cl = make_connecting_line(crcl, central_circle)
-            
+
             # all_objects.add(virtual_circle_w_centers)
             # all_objects.add(pnt)
             all_objects.add(crcl)
