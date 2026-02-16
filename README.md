@@ -6,6 +6,8 @@ uv run manim -pql main.py StartingFromTheLeftCircle
 
 uv run manim -pql nrays.py StartingFromTheLeftCircle
 
+uv run manim -pql varradnrays.py StartingFromTheLeftCircle
+
 uv run manim -pql nrays.py NRaysTest
 
 
