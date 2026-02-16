@@ -4,7 +4,7 @@
 ITERATIONS=3 uv run manim -pql ./cmd/circle.py ConcentricCircles
 
 # examples 
-uv run manim -pql ./cmd/nrays.py StartingFromTheLeftCircle
+ITERATIONS=2 RAYS=4 uv run manim -pql ./cmd/nrays.py StartingFromTheLeftCircle
 
 
 uv run manim -pql ./cmd/main.py StartingFromTheLeftCircle

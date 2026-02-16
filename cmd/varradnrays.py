@@ -42,8 +42,7 @@ class StartingFromTheLeftCircle(Scene):
         
         if entry_data.starting_circle is None:
             entry_data.starting_circle = make_filled_circle_w_rays(entry_data.rays)
-            all_objects = VGroup()
-            all_objects.add(entry_data.starting_circle)
+            entry_data.all_objects.add(entry_data.starting_circle)
             self.play(Create(entry_data.starting_circle),)
             self.wait(0.1)
         

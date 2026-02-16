@@ -1,63 +1,66 @@
+from dataclasses import dataclass
 from manim import *
-from numpy import ndarray
-import math
 from src.angle import get_angle, to_rads
+from src.anims.fractal import make_n_iters
 from src.funcs import get_circle_radius, make_connecting_line, make_filled_circle
+import os
+from typing import Union
+import math
+
+@dataclass
+class EntryData:
+    all_objects: VGroup
+    starting_circle: Union[Circle, None]
+    rays: int
+
 
 class StartingFromTheLeftCircle(Scene):
     def construct(self):
-        self.make_n_iters(1, 7)
+        iterations = int(os.environ.get('ITERATIONS', 5))
+        rays = int(os.environ.get('RAYS', 5))
+        entry_data = EntryData(VGroup(), None, rays)
 
-    def make_n_iters(self, n: int = 2, rays: int = 4):
+        make_n_iters(
+            iterations,
+            self.make_1_iteration,
+            entry_data,
+        )
 
-        res_dct = self.make_the_first_iteration_and_return_starting_circle(
-            rays)
-        for i in range(n):
-            res_dct = self.make_1_iteration_and_return_starting_circle_and_all_prev_objs(
-                res_dct['starting_circle'],
-                res_dct['all_objects'],
-                rays,
-            )
-
-    def make_the_first_iteration_and_return_starting_circle(self, rays: int = 4) -> dict:
-        left_circle = make_filled_circle()
-        all_objects = VGroup()
-        all_objects.add(left_circle)
-        self.play(Create(left_circle),)
-        self.wait(0.1)
-        return self.make_1_iteration_and_return_starting_circle_and_all_prev_objs(left_circle, all_objects, rays)
-
-    def make_1_iteration_and_return_starting_circle_and_all_prev_objs(self, starting_circle, all_objects: VGroup, rays: int = 4) -> dict:
+    def make_1_iteration(self, entry_data: EntryData) -> EntryData:
         ''' dont add virtual objects to all_objects so that they dont accidentally appear in animations
         '''
+        if entry_data.starting_circle is None:
+            entry_data.starting_circle = make_filled_circle()
+            entry_data.all_objects.add(entry_data.starting_circle)
+            self.play(Create(entry_data.starting_circle),)
+            self.wait(0.1)
         central_circle = Circle(color=WHITE)
 
         self.play(
-            all_objects.animate.shift(LEFT * 2.5),
+            entry_data.all_objects.animate.shift(LEFT * 2.5),
             run_time=2
         )
         # first ray is always left, so central has direction=right
         # central_circle.next_to(starting_circle, RIGHT, buff=0.5)
-        all_objects.add(central_circle)
+        entry_data.all_objects.add(central_circle)
         self.play(Create(central_circle))
 
         connecting_line = make_connecting_line(
-            starting_circle,
+            entry_data.starting_circle,
             central_circle,
         )
-        all_objects.add(connecting_line)
+        entry_data.all_objects.add(connecting_line)
         self.play(Create(connecting_line))
 
-
         central_point = Dot(point=[0, 0, 0], color=BLUE)
-        # all_objects.add(central_point)
+        # entry_data.all_objects.add(central_point)
 
-        print(f'will have {rays} circles')
+        print(f'will have {entry_data.rays} circles')
         anims = []
-        for i in range(1, rays):
+        for i in range(1, entry_data.rays):
             print(f'iter {i}')
 
-            angle = get_angle(i, rays)
+            angle = get_angle(i, entry_data.rays)
             angle_in_rads = to_rads(angle)
             x = math.cos(angle_in_rads)
             y = math.sin(angle_in_rads)
@@ -78,10 +81,10 @@ class StartingFromTheLeftCircle(Scene):
             crcl.set_fill(GREEN, opacity=0.8)
             cl = make_connecting_line(crcl, central_circle)
 
-            # all_objects.add(virtual_circle_w_centers)
-            # all_objects.add(pnt)
-            all_objects.add(crcl)
-            all_objects.add(cl)
+            # entry_data.all_objects.add(virtual_circle_w_centers)
+            # entry_data.all_objects.add(pnt)
+            entry_data.all_objects.add(crcl)
+            entry_data.all_objects.add(cl)
 
             anims.append(Create(crcl))
             anims.append(Create(cl))
@@ -90,18 +93,24 @@ class StartingFromTheLeftCircle(Scene):
 
         next_level_left = Circle(
             color=WHITE,
-            radius=all_objects.width/2 + 0.5
+            radius=entry_data.all_objects.width/2 + 0.5
         )
         next_level_left.move_to(central_point.get_center())
         self.play(Create(next_level_left))
 
-        all_objects.add(next_level_left)
+        entry_data.all_objects.add(next_level_left)
         self.wait(0.1)
         self.play(
-            all_objects.animate.scale(0.25),
+            entry_data.all_objects.animate.scale(0.25),
             run_time=1
         )
         self.wait(0.1)
+        res_data = EntryData(
+            entry_data.all_objects,
+            next_level_left,
+            entry_data.rays,
+        )
+        return res_data        
         return {
             'starting_circle': next_level_left,
             'all_objects': all_objects,
@@ -195,11 +204,3 @@ class HalfCircle(Scene):
         self.add(*points)
         self.add(*labels)
         self.wait()
-
-
-
-
-
-
-
-
