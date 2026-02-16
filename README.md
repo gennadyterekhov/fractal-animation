@@ -1,23 +1,23 @@
 # trying manim
 
 # simplest example of fractal animation
-ITERATIONS=3 uv run manim -pql circle.py ConcentricCircles
+ITERATIONS=3 uv run manim -pql ./cmd/circle.py ConcentricCircles
 
 # examples 
-uv run manim -pql nrays.py StartingFromTheLeftCircle
+uv run manim -pql ./cmd/nrays.py StartingFromTheLeftCircle
 
 
-uv run manim -pql main.py StartingFromTheLeftCircle
+uv run manim -pql ./cmd/main.py StartingFromTheLeftCircle
 
 
-ITERATIONS=3 RAYS=4 uv run manim -pql varradnrays.py StartingFromTheLeftCircle
+ITERATIONS=3 RAYS=4 uv run manim -pql ./cmd/varradnrays.py StartingFromTheLeftCircle
 
 # tests
-uv run manim -pql nrays.py NRaysTest
+uv run manim -pql ./cmd/nrays.py NRaysTest
 
-uv run manim -pql nrays.py PointExample
+uv run manim -pql ./cmd/nrays.py PointExample
 
-uv run manim -pql nrays.py HalfCircle
+uv run manim -pql ./cmd/nrays.py HalfCircle
 
 
 
