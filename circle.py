@@ -3,7 +3,7 @@ from manim import *
 from src.angle import get_angle, to_rads
 from src.anims.fractal import make_n_iters
 from src.funcs import get_circle_radius, make_connecting_line, make_filled_circle
-
+import os
 
 @dataclass
 class EntryData:
@@ -12,9 +12,10 @@ class EntryData:
 
 class ConcentricCircles(Scene):
     def construct(self):
+        iterations = int(os.environ.get('ITERATIONS', 5))
         entry_data = EntryData(VGroup())
         make_n_iters(
-            4,
+            iterations,
             self.make_1_iteration,
             entry_data,
         )
