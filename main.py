@@ -1,5 +1,7 @@
 from manim import *
 
+from src.funcs import get_circle_radius, make_connecting_line, make_filled_circle
+
 
 class StartingFromTheLeftCircle(Scene):
     def construct(self):
@@ -15,7 +17,7 @@ class StartingFromTheLeftCircle(Scene):
             )
 
     def make_the_first_iteration_and_return_starting_circle(self) -> dict:
-        left_circle = self.make_filled_circle()
+        left_circle = make_filled_circle()
 
         central_circle = Circle(color=WHITE)
         central_circle.next_to(
@@ -31,16 +33,16 @@ class StartingFromTheLeftCircle(Scene):
         central_circle.next_to(starting_circle, RIGHT, buff=0.5)
         self.play(Create(central_circle))
 
-        connecting_line = self.make_connecting_line(
+        connecting_line = make_connecting_line(
             starting_circle,
             central_circle,
         )
 
         self.play(Create(connecting_line))
 
-        up_circle = self.make_filled_circle()
-        down_circle = self.make_filled_circle()
-        right_circle = self.make_filled_circle()
+        up_circle = make_filled_circle()
+        down_circle = make_filled_circle()
+        right_circle = make_filled_circle()
 
         all_objects.add(up_circle, down_circle, right_circle,
                         starting_circle, central_circle)
@@ -49,10 +51,10 @@ class StartingFromTheLeftCircle(Scene):
         down_circle.next_to(central_circle, DOWN, buff=0.5)
         right_circle.next_to(central_circle, RIGHT, buff=0.5)
 
-        connecting_line2 = self.make_connecting_line(up_circle, central_circle)
-        connecting_line3 = self.make_connecting_line(
+        connecting_line2 = make_connecting_line(up_circle, central_circle)
+        connecting_line3 = make_connecting_line(
             down_circle, central_circle)
-        connecting_line4 = self.make_connecting_line(
+        connecting_line4 = make_connecting_line(
             right_circle, central_circle)
 
         all_objects.add(connecting_line, connecting_line2,
@@ -89,19 +91,3 @@ class StartingFromTheLeftCircle(Scene):
             'starting_circle': next_level_left,
             'all_objects': all_objects,
         }
-
-    def make_connecting_line(self, obj1: Circle, obj2: Circle):
-        direction = (obj2.get_center() - obj1.get_center())
-        direction = normalize(direction)
-
-        start_point = obj1.get_center() + direction
-
-        end_point = obj2.get_center() - direction
-        connecting_line = Line(start_point, end_point,
-                               color=WHITE, stroke_width=3)
-        return connecting_line
-
-    def make_filled_circle(self):
-        circle = Circle(color=WHITE)
-        circle.set_fill(GREEN, opacity=0.8)
-        return circle

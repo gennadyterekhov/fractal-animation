@@ -2,7 +2,7 @@ from manim import *
 from numpy import ndarray
 import math
 from src.angle import get_angle, to_rads
-
+from src.funcs import get_circle_radius, make_connecting_line, make_filled_circle
 
 class StartingFromTheLeftCircle(Scene):
     def construct(self):
@@ -197,47 +197,9 @@ class HalfCircle(Scene):
         self.wait()
 
 
-def get_direction(iter: int, rays: int) -> ndarray:
-    '''
-    UP: Vector3D = np.array((0.0, 1.0, 0.0))
-    """One unit step in the positive Y direction."""
-
-    DOWN: Vector3D = np.array((0.0, -1.0, 0.0))
-    """One unit step in the negative Y direction."""
-
-    RIGHT: Vector3D = np.array((1.0, 0.0, 0.0))
-    """One unit step in the positive X direction."""
-
-    LEFT: Vector3D = np.array((-1.0, 0.0, 0.0))
-    """One unit step in the negative X direction."""
-
-    '''
-    print()
-    print('get_direction', iter)
-    angle = get_angle(iter, rays)
-    angle_in_rads = to_rads(angle)
-    x = math.cos(angle_in_rads)
-    y = math.sin(angle_in_rads)
-    print('angle', angle)
-    print('angle_in_rads', angle_in_rads)
-    print('x', x)
-    print('y', y)
-    return np.array((x, y, 0.0))
 
 
-def make_connecting_line(obj1: Circle, obj2: Circle):
-    direction = (obj2.get_center() - obj1.get_center())
-    direction = normalize(direction)
-
-    start_point = obj1.get_center() + direction
-
-    end_point = obj2.get_center() - direction
-    connecting_line = Line(start_point, end_point,
-                           color=WHITE, stroke_width=3)
-    return connecting_line
 
 
-def make_filled_circle():
-    circle = Circle(color=WHITE)
-    circle.set_fill(GREEN, opacity=0.8)
-    return circle
+
+
