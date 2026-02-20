@@ -34,8 +34,8 @@ def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
 
 
 def get_radius(rays: int) -> float:
-    return 1/rays + 0.5
-    return 1
+    """we need to pick the value and then check manually"""
+    return 1 / (1 * rays) + 0.09
 
 
 class StartingFromTheCenterWithVariableRadius(Scene):
