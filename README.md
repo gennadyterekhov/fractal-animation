@@ -5,6 +5,7 @@ ITERATIONS=3 uv run manim -pql ./cmd/circle.py ConcentricCircles
 
 # examples 
 
+## circle with N rays beaming from it
 ITERATIONS=2 RAYS=4 uv run manim -pql ./cmd/circle_with_n_rays.py CircleWithNRays
 
 
