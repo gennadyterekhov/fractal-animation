@@ -28,7 +28,6 @@ class CircleWithNRays(Scene):
         iterations = int(os.environ.get('ITERATIONS', 5))
         rays = int(os.environ.get('RAYS', 5))
         entry_data = EntryData(VGroup(), rays)
-
         make_n_iters(
             iterations,
             self.make_1_iteration,
@@ -37,16 +36,9 @@ class CircleWithNRays(Scene):
 
     def make_1_iteration(self, entry_data: EntryData) -> EntryData:
         central_circle = Circle()
-
         entry_data.all_objects.add(central_circle)
         self.play(Create(central_circle))
-
         anims = get_rays_anims(entry_data, central_circle)
-
         self.play(*anims)
-
-        self.play(
-            entry_data.all_objects.animate.scale(0.25, about_point=(0, 0, 0)),
-            run_time=1
-        )
+        self.play(entry_data.all_objects.animate.scale(0.25, about_point=(0, 0, 0)))
         return EntryData(entry_data.all_objects, entry_data.rays)
