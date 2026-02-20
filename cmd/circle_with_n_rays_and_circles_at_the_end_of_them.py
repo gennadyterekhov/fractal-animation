@@ -33,6 +33,9 @@ def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
 
 
 class StartingFromTheCenter(Scene):
+    """
+    Circles will overlap ! because their radius is not changing with respect to number of rays
+    """
     def construct(self):
         iterations = int(os.environ.get('ITERATIONS', 5))
         rays = int(os.environ.get('RAYS', 5))
