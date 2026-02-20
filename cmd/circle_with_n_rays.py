@@ -13,13 +13,11 @@ class EntryData:
     rays: int
 
 
-def get_rays_anims(entry_data: EntryData, central_circle: Circle, ) -> list:
+def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
     anims = []
     for i in range(entry_data.rays):
-        print(f'iter {i}')
         (x, y, z) = get_direction(i, entry_data.rays)
-        pnt = Dot(point=[x * 2.5, y * 2.5, 0], color=PURPLE)
-        cl = make_connecting_line(pnt, central_circle)
+        cl = make_connecting_line(Dot(point=[x * 2.5, y * 2.5, 0]), central_circle)
         entry_data.all_objects.add(cl)
         anims.append(Create(cl))
     return anims
