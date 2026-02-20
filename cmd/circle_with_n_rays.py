@@ -50,8 +50,8 @@ class CircleWithNRays(Scene):
                 color=BLUE,
                 stroke_width=2
             )
-            self.add(_cntr_pnt)
-            self.add(pnt)
+            # self.add(_cntr_pnt)
+            # self.add(pnt)
             # self.add(virtual_circle_w_centers)
             crcl = Circle(
                 radius=1,
