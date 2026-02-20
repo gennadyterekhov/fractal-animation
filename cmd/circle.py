@@ -1,9 +1,9 @@
+import os
 from dataclasses import dataclass
 from manim import *
-from src.angle import get_angle, to_rads
+
 from src.anims.fractal import make_n_iters
-from src.funcs import get_circle_radius, make_connecting_line, make_filled_circle
-import os
+
 
 @dataclass
 class EntryData:
@@ -20,7 +20,7 @@ class ConcentricCircles(Scene):
             entry_data,
         )
 
-    def make_1_iteration(self, entry_data: EntryData) -> dict:
+    def make_1_iteration(self, entry_data: EntryData) -> EntryData:
         central_circle = Circle()
 
         entry_data.all_objects.add(central_circle)
