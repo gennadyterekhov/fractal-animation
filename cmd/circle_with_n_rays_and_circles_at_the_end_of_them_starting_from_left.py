@@ -12,62 +12,86 @@ import math
 @dataclass
 class EntryData:
     all_objects: VGroup
-    starting_circle: Union[Circle, None]
     rays: int
-    current_iteration: int
-    text_blocks: List[Text]
+    radius: float
 
 
-class StartingFromTheLeftCircle(Scene):
+def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
+    anims = []
+    for i in range(entry_data.rays):
+        (x, y, z) = get_direction(i, entry_data.rays)
+        crcl = Circle(
+            radius=entry_data.radius,
+            color=WHITE,
+            stroke_width=2,
+        ).move_to([x * 2.5, y * 2.5, 0])
+        crcl.set_fill(GREEN, opacity=0.8)
+        cl = make_connecting_line(crcl, central_circle)
+        entry_data.all_objects.add(cl)
+        entry_data.all_objects.add(crcl)
+        anims.append(Create(cl))
+        anims.append(Create(crcl))
+
+    return anims
+
+
+def get_radius(rays: int) -> float:
+    """we need to pick the value and then check manually"""
+    return 1 / (1 * rays) + 0.09
+
+
+class StartingFromTheLeftCircleWithVariableRadius(Scene):
     def construct(self):
         iterations = int(os.environ.get('ITERATIONS', 5))
         rays = int(os.environ.get('RAYS', 5))
-        entry_data = EntryData(VGroup(), None, rays, 1, [])
-
+        radius = get_radius(rays)
+        entry_data = EntryData(VGroup(), rays, radius)
         make_n_iters(
             iterations,
-            self.make_1_iteration,
+            self.make_1_iteration_old,
             entry_data,
         )
 
     def make_1_iteration(self, entry_data: EntryData) -> EntryData:
-        ''' dont add virtual objects to all_objects so that they dont accidentally appear in animations
-        '''
-        print('[make_1_iteration]', entry_data.current_iteration)
-        existing_text=None
-        if len(entry_data.text_blocks):
-            existing_text=entry_data.text_blocks[0]
-        else:
-            entry_data.text_blocks.append(Text)
-            existing_text=entry_data.text_blocks[0]
-        entry_data.text_blocks[0] = write_on_screen(
-            self,
-            f'Iteration: {entry_data.current_iteration}',
-            existing_text,
-        )
-        if entry_data.starting_circle is None:
-            entry_data.starting_circle = make_filled_circle()
-            entry_data.all_objects.add(entry_data.starting_circle)
-            self.play(Create(entry_data.starting_circle),)
-            self.wait(0.1)
+        # main circle is always the same size
+        central_circle = Circle(radius=1)
+        entry_data.all_objects.add(central_circle)
+        self.play(Create(central_circle))
+        anims = get_rays_anims(entry_data, central_circle)
+        self.play(*anims)
+        self.play(entry_data.all_objects.animate.scale(0.25, about_point=(0, 0, 0)))
+        return EntryData(entry_data.all_objects, entry_data.rays, entry_data.radius)
 
+    def make_1_iteration_old(self, entry_data: EntryData) -> EntryData:
+
+        starting_circle = Circle(
+            radius=entry_data.radius,
+            color=WHITE,
+            stroke_width=2,
+        )
+        starting_circle.set_fill(GREEN, opacity=0.8)
+        entry_data.all_objects.add(starting_circle)
+
+        self.play(Create(starting_circle), )
         self.play(
             entry_data.all_objects.animate.shift(LEFT * 2.5),
             run_time=2
         )
+
         # first ray is always left, so central has direction=right
-        central_circle = Circle(color=WHITE, stroke_width=2, radius=1,)
-        central_circle.next_to(entry_data.starting_circle, RIGHT, buff=0.5)
+        central_circle = Circle(color=WHITE, stroke_width=2, radius=1, )
+        # central_circle.next_to(starting_circle, RIGHT, buff=0.5)
+        central_circle.move_to((0,0,0))
         entry_data.all_objects.add(central_circle)
         self.play(Create(central_circle))
-        print()
+
         _start_crcl_center = Dot(
-            point=entry_data.starting_circle.get_center(), color=PURPLE)
+            point=starting_circle.get_center(), color=PURPLE)
         self.add(_start_crcl_center)
         entry_data.all_objects.add(_start_crcl_center)
 
         connecting_line = make_connecting_line(
-            entry_data.starting_circle,
+            starting_circle,
             central_circle,
         )
         entry_data.all_objects.add(connecting_line)
@@ -76,57 +100,28 @@ class StartingFromTheLeftCircle(Scene):
         central_point = Dot(point=[0, 0, 0], color=BLUE)
         # entry_data.all_objects.add(central_point)
 
-        print(f'will have {entry_data.rays} circles')
-        anims = []
-        for i in range(1, entry_data.rays):
-            print(f'iter {i}')
-            (x, y, z) = get_direction(i, entry_data.rays)
-            pnt = Dot(point=[x*2.5, y*2.5, 0], color=PURPLE)
-            virtual_circle_w_centers = Circle(
-                radius=2.5,
-                color=BLUE,
-                stroke_width=2
-            )
-            # self.add(pnt)
-            # self.add(virtual_circle_w_centers)
-            crcl = Circle(
-                radius=1,
-                color=WHITE,
-                stroke_width=2,
-            ).move_to(pnt.get_center())
-            crcl.set_fill(GREEN, opacity=0.8)
-            cl = make_connecting_line(crcl, central_circle)
-
-            # entry_data.all_objects.add(virtual_circle_w_centers)
-            # entry_data.all_objects.add(pnt)
-            entry_data.all_objects.add(crcl)
-            entry_data.all_objects.add(cl)
-
-            anims.append(Create(crcl))
-            anims.append(Create(cl))
-
+        anims = get_rays_anims(entry_data, central_circle)
         self.play(*anims)
-
+        self.play(
+            entry_data.all_objects.animate.scale(0.25),
+            run_time=1
+        )
+        return EntryData(
+            entry_data.all_objects,
+            entry_data.rays,
+            entry_data.radius,
+        )
         next_level_left = Circle(
             color=WHITE,
-            radius=entry_data.all_objects.width/2 + 0.5
+            radius=entry_data.all_objects.width / 2 + 0.5
         )
         next_level_left.move_to(central_point.get_center())
         self.play(Create(next_level_left))
 
         entry_data.all_objects.add(next_level_left)
-        self.wait(0.1)
         # меняет ли это координаты?
-        self.play(
-            entry_data.all_objects.animate.scale(0.25),
-            run_time=1
-        )
-        self.wait(0.1)
-        res_data = EntryData(
+        return EntryData(
             entry_data.all_objects,
-            next_level_left,
             entry_data.rays,
-            entry_data.current_iteration+1,
-            entry_data.text_blocks,
+            entry_data.radius,
         )
-        return res_data
