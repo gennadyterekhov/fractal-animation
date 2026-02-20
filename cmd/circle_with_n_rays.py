@@ -36,7 +36,7 @@ class CircleWithNRays(Scene):
         if len(entry_data.text_blocks):
             existing_text = entry_data.text_blocks[0]
         else:
-            entry_data.text_blocks.append(Text)
+            entry_data.text_blocks.append(Text(''))
             existing_text = entry_data.text_blocks[0]
         entry_data.text_blocks[0] = write_on_screen(
             self,
@@ -79,10 +79,10 @@ class CircleWithNRays(Scene):
 
             # entry_data.all_objects.add(virtual_circle_w_centers)
             # entry_data.all_objects.add(pnt)
-            entry_data.all_objects.add(crcl)
+            # entry_data.all_objects.add(crcl)
             entry_data.all_objects.add(cl)
 
-            anims.append(Create(crcl))
+            # anims.append(Create(crcl))
             anims.append(Create(cl))
 
         self.play(*anims)
