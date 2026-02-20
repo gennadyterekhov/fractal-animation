@@ -63,7 +63,6 @@ class StartingFromTheLeftCircleWithVariableRadius(Scene):
         return EntryData(entry_data.all_objects, entry_data.rays, entry_data.radius)
 
     def make_1_iteration_old(self, entry_data: EntryData) -> EntryData:
-
         starting_circle = Circle(
             radius=entry_data.radius,
             color=WHITE,
@@ -78,17 +77,10 @@ class StartingFromTheLeftCircleWithVariableRadius(Scene):
             run_time=2
         )
 
-        # first ray is always left, so central has direction=right
         central_circle = Circle(color=WHITE, stroke_width=2, radius=1, )
-        # central_circle.next_to(starting_circle, RIGHT, buff=0.5)
-        central_circle.move_to((0,0,0))
+        central_circle.move_to((0, 0, 0))
         entry_data.all_objects.add(central_circle)
         self.play(Create(central_circle))
-
-        _start_crcl_center = Dot(
-            point=starting_circle.get_center(), color=PURPLE)
-        self.add(_start_crcl_center)
-        entry_data.all_objects.add(_start_crcl_center)
 
         connecting_line = make_connecting_line(
             starting_circle,
@@ -97,29 +89,12 @@ class StartingFromTheLeftCircleWithVariableRadius(Scene):
         entry_data.all_objects.add(connecting_line)
         self.play(Create(connecting_line))
 
-        central_point = Dot(point=[0, 0, 0], color=BLUE)
-        # entry_data.all_objects.add(central_point)
-
         anims = get_rays_anims(entry_data, central_circle)
         self.play(*anims)
         self.play(
-            entry_data.all_objects.animate.scale(0.25),
+            entry_data.all_objects.animate.scale(0.25 * entry_data.radius),
             run_time=1
         )
-        return EntryData(
-            entry_data.all_objects,
-            entry_data.rays,
-            entry_data.radius,
-        )
-        next_level_left = Circle(
-            color=WHITE,
-            radius=entry_data.all_objects.width / 2 + 0.5
-        )
-        next_level_left.move_to(central_point.get_center())
-        self.play(Create(next_level_left))
-
-        entry_data.all_objects.add(next_level_left)
-        # меняет ли это координаты?
         return EntryData(
             entry_data.all_objects,
             entry_data.rays,
