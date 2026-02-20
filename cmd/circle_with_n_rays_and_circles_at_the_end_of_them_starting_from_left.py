@@ -1,12 +1,10 @@
-from dataclasses import dataclass
-from manim import *
-from src.angle import get_angle, to_rads
-from src.anims.fractal import make_n_iters
-from src.debug.logger import write_on_screen
-from src.funcs import get_circle_radius, get_direction, make_connecting_line, make_filled_circle
 import os
-from typing import Union, List
-import math
+from dataclasses import dataclass
+
+from manim import *
+
+from src.anims.fractal import make_n_iters
+from src.funcs import get_direction, make_connecting_line
 
 
 @dataclass
@@ -53,16 +51,6 @@ class StartingFromTheLeftCircleWithVariableRadius(Scene):
         )
 
     def make_1_iteration(self, entry_data: EntryData) -> EntryData:
-        # main circle is always the same size
-        central_circle = Circle(radius=1)
-        entry_data.all_objects.add(central_circle)
-        self.play(Create(central_circle))
-        anims = get_rays_anims(entry_data, central_circle)
-        self.play(*anims)
-        self.play(entry_data.all_objects.animate.scale(0.25, about_point=(0, 0, 0)))
-        return EntryData(entry_data.all_objects, entry_data.rays, entry_data.radius)
-
-    def make_1_iteration_old(self, entry_data: EntryData) -> EntryData:
         starting_circle = Circle(
             radius=entry_data.radius,
             color=WHITE,
