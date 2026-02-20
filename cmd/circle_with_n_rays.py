@@ -1,27 +1,35 @@
-from dataclasses import dataclass
-from manim import *
-from src.angle import get_angle, to_rads
-from src.anims.fractal import make_n_iters
-from src.debug.logger import write_on_screen
-from src.funcs import get_circle_radius, get_direction, make_connecting_line, make_filled_circle
 import os
-from typing import Union, List
-import math
+from dataclasses import dataclass
+
+from manim import *
+
+from src.anims.fractal import make_n_iters
+from src.funcs import get_direction, make_connecting_line
 
 
 @dataclass
 class EntryData:
     all_objects: VGroup
     rays: int
-    current_iteration: int
-    text_blocks: List[Text]
+
+
+def get_rays_anims(entry_data: EntryData, central_circle: Circle, ) -> list:
+    anims = []
+    for i in range(entry_data.rays):
+        print(f'iter {i}')
+        (x, y, z) = get_direction(i, entry_data.rays)
+        pnt = Dot(point=[x * 2.5, y * 2.5, 0], color=PURPLE)
+        cl = make_connecting_line(pnt, central_circle)
+        entry_data.all_objects.add(cl)
+        anims.append(Create(cl))
+    return anims
 
 
 class CircleWithNRays(Scene):
     def construct(self):
         iterations = int(os.environ.get('ITERATIONS', 5))
         rays = int(os.environ.get('RAYS', 5))
-        entry_data = EntryData(VGroup(), rays, 1, [])
+        entry_data = EntryData(VGroup(), rays)
 
         make_n_iters(
             iterations,
@@ -35,25 +43,12 @@ class CircleWithNRays(Scene):
         entry_data.all_objects.add(central_circle)
         self.play(Create(central_circle))
 
-        anims = []
-        for i in range(entry_data.rays):
-            print(f'iter {i}')
-            (x, y, z) = get_direction(i, entry_data.rays)
-            pnt = Dot(point=[x * 2.5, y * 2.5, 0], color=PURPLE)
-            cl = make_connecting_line(pnt, central_circle)
-            entry_data.all_objects.add(cl)
-            anims.append(Create(cl))
+        anims = get_rays_anims(entry_data, central_circle)
 
         self.play(*anims)
 
         self.play(
-            entry_data.all_objects.animate.scale(0.25, about_point=(0,0,0)),
+            entry_data.all_objects.animate.scale(0.25, about_point=(0, 0, 0)),
             run_time=1
         )
-        res_data = EntryData(
-            entry_data.all_objects,
-            entry_data.rays,
-            entry_data.current_iteration + 1,
-            entry_data.text_blocks,
-        )
-        return res_data
+        return EntryData(entry_data.all_objects, entry_data.rays)
