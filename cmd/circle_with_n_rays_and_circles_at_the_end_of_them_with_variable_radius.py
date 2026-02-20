@@ -11,6 +11,7 @@ from src.funcs import get_direction, make_connecting_line
 class EntryData:
     all_objects: VGroup
     rays: int
+    radius: float
 
 
 def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
@@ -18,7 +19,7 @@ def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
     for i in range(entry_data.rays):
         (x, y, z) = get_direction(i, entry_data.rays)
         crcl = Circle(
-            radius=1,
+            radius=entry_data.radius,
             color=WHITE,
             stroke_width=2,
         ).move_to([x * 2.5, y * 2.5, 0])
@@ -32,11 +33,17 @@ def get_rays_anims(entry_data: EntryData, central_circle: Circle) -> list:
     return anims
 
 
+def get_radius(rays: int) -> float:
+    return 1/rays + 0.5
+    return 1
+
+
 class StartingFromTheCenterWithVariableRadius(Scene):
     def construct(self):
         iterations = int(os.environ.get('ITERATIONS', 5))
         rays = int(os.environ.get('RAYS', 5))
-        entry_data = EntryData(VGroup(), rays)
+        radius = get_radius(rays)
+        entry_data = EntryData(VGroup(), rays, radius)
         make_n_iters(
             iterations,
             self.make_1_iteration,
@@ -44,10 +51,11 @@ class StartingFromTheCenterWithVariableRadius(Scene):
         )
 
     def make_1_iteration(self, entry_data: EntryData) -> EntryData:
-        central_circle = Circle()
+        # main circle is always the same size
+        central_circle = Circle(radius=1)
         entry_data.all_objects.add(central_circle)
         self.play(Create(central_circle))
         anims = get_rays_anims(entry_data, central_circle)
         self.play(*anims)
         self.play(entry_data.all_objects.animate.scale(0.25, about_point=(0, 0, 0)))
-        return EntryData(entry_data.all_objects, entry_data.rays)
+        return EntryData(entry_data.all_objects, entry_data.rays, entry_data.radius)
