@@ -8,8 +8,8 @@ ITERATIONS=3 uv run manim -pql ./cmd/circle.py ConcentricCircles
 ## circle with N rays beaming from it
 ITERATIONS=2 RAYS=4 uv run manim -pql ./cmd/circle_with_n_rays.py CircleWithNRays
 
-
-ITERATIONS=2 RAYS=4 uv run manim -pql ./cmd/nrays.py StartingFromTheLeftCircle
+## circle with n rays and circles at the end of them
+ITERATIONS=2 RAYS=4 uv run manim -pql ./cmd/circle_with_n_rays_and_circles_at_the_end_of_them.py StartingFromTheCenter
 
 
 uv run manim -pql ./cmd/main.py StartingFromTheLeftCircle
