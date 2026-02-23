@@ -23,6 +23,10 @@
 
     ITERATIONS=2 RAYS=8 uv run manim -pql ./cmd/circle_with_n_rays_and_circles_at_the_end_of_them_starting_from_left.py StartingFromTheLeftCircleWithVariableRadius
 
+## julia island
+
+    uv run manim -pql ./cmd/julia.py JuliaIsland
+
 # tests
 
     uv run manim -pql ./cmd/example.py NRaysTest
