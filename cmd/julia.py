@@ -12,7 +12,7 @@ class JuliaIsland(Scene):
         c = complex(c_real, c_imag)
 
         # Julia set parameters
-        max_iter = 100  # Maximum iterations for the fractal calculation
+        max_iter = 200  # Maximum iterations for the fractal calculation
         power = 2  # Using z = z^2 + c
 
         # Create the Julia set as a custom mobject
@@ -29,7 +29,7 @@ class JuliaIsland(Scene):
             color=YELLOW
         ).to_corner(UL)
         self.add(title)
-        # self.play(julia.animate.scale(4, about_point=(0, 0, 0)))
+        self.play(julia.animate.scale(4, about_point=(0, 0, 0)))
 
     # Optional: Add a slow reveal animation
     # self.wait(2)
